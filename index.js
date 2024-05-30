@@ -6,6 +6,9 @@ const bodyParser = require("body-parser")
 const cookieParser = require("cookie-parser")
 const authRoutes =require('./routes/authRoutes')
 const fileshareRoutes = require("./routes/fileShareRoutes");
+const dotenv = require('dotenv');
+
+dotenv.config();
 require('./db')
 require('./models/userModel')
 require('./models/verificationModel')

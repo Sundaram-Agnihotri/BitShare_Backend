@@ -9,7 +9,9 @@ const nodemailer = require("nodemailer")
 const responseFunction=require("../utils/responseFunction");
 const fs = require("fs");
 const errorHandler = require("../middlewares/errorMiddleware")
-const checkAuthTokens = require("../middlewares/checkAuthToken");
+const authTokenHandler = require("../middlewares/checkAuthToken");
+const dotenv = require('dotenv');
+dotenv.config();
 
 //nodemailer function
 async function mailer(recieveremail,code){
@@ -160,4 +162,58 @@ router.post('/register',fileuploadFunction,async (req,res,next) => {
     }
 })
 
+//login api
+router.post('/login', async (req, res, next) => {
+    try {
+      const { email, password } = req.body;
+      const user = await User.findOne({ email });
+      if (!user) {
+        return responseFunction(res, 400, "Invalid credentials", null, false);
+      }
+      const isMatch = await bcrypt.compare(password, user.password);
+  
+      if (!isMatch) {
+        return responseFunction(res, 400, "invalid credentials", null, false);
+      }
+      //generate auth tokens
+      const authToken = jwt.sign({ userId: user._id }, process.env.JWT_SECRET_KEY, { expiresIn: `10m` });
+  
+      //genrate refresh token
+      const refreshToken = jwt.sign({ userId: user._id }, process.env.JWT_REFRESH_SECRET_KEY, { expiresIn: `10m` });
+  
+      //set cookies
+      res.cookie('authToken', authToken, { httpOnly: true });
+      res.cookie('refreshToken', refreshToken, { httpOnly: true });
+  
+      return responseFunction(res, 200, "loggedin successfully", {
+        authToken: authToken,
+        refreshToken: refreshToken
+      }, true);
+  
+    } catch (err) {
+      next(err);
+    }
+  });
+
+//updated API
+
+//checklogin Api
+router.get('/checklogin',authTokenHandler,async (req,res,next) => {
+    res.json({
+        ok : req.ok,
+        message : req.message,
+        userId : req.userId
+    })
+})
+
+//logout api
+router.post('/logout',authTokenHandler,async (req,res,next) => {
+    res.clearCookie('authToken')
+    res.clearCookie('refreshToekn');
+
+    res.json({
+        ok : true,
+        message :"logged out successfully"
+    })
+})
 module.exports = router;
