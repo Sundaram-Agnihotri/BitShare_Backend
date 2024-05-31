@@ -80,7 +80,7 @@ router.post('/sendotp', async (req, res) => {
         return responseFunction(res, 400, 'Email is required', null, false);
     }
     try {
-        // await Verification.deleteOne({ email: email });
+        await Verification.deleteOne({ email: email });
 
         //generating an otp code
         const code = Math.floor(100000 + Math.random() * 900000);
@@ -215,5 +215,20 @@ router.post('/logout',authTokenHandler,async (req,res,next) => {
         ok : true,
         message :"logged out successfully"
     })
+})
+
+//getuser API
+router.get('/getuser', authTokenHandler, async (req, res, next) => {
+    try {
+        const user = await User.findById(req.userId);
+        if (!user) {
+            return responseFunction(res, 400, 'User not found', null, false);
+        }
+        return responseFunction(res, 200, 'User found', user, true);
+
+    }
+    catch (err) {
+        next(err);
+    }
 })
 module.exports = router;
