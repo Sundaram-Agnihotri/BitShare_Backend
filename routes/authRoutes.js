@@ -27,7 +27,7 @@ async function mailer(recieveremail,code){
     })
 
     let info = await transporter.sendMail({
-        from: "Team BitShare",
+        from: '"Team BitShare" <agnihotrisundaram8@gmail.com>',
         to: recieveremail,
         subject: "OTP for BitShare",
         text: "Your OTP is " + code,

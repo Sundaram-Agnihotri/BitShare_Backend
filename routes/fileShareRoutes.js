@@ -161,6 +161,19 @@ router.post(
   }
 );
 
+router.get('/getfiles', authTokenHandler, async (req, res, next) => {
+  try {
+      let user = await User.findOne({ _id: req.userId });
+      if (!user) {
+          return responseFunction(res, 400, 'User not found', null, false);
+      }
+      return responseFunction(res, 200, 'files fetched successfully', user.files, true);
+  }
+  catch (err) {
+      next(err);
+  }
+})
+
 router.use(errorHandler);
 
 module.exports = router;
