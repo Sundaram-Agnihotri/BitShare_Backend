@@ -54,12 +54,26 @@ io.on('connection', (socket) => {
     //     console.log('user disconnected');
     // })
 
-        socket.on('joinself', (data) => {
+
+    socket.on('joinself', (data) => {
         console.log('joining self', data);
         socket.join(data);
     })
-})
 
+
+    socket.on('uploaded',(data)=>{
+        let sender = data.from;
+        let receiver = data.to;
+
+        console.log('uploaded', data);
+
+
+        socket.to(receiver).emit('notify', {
+            from: sender,
+            message: 'New file shared'
+        })
+    })
+})       
 app.use("/auth", authRoutes);
 app.use("/file", fileshareRoutes);
 

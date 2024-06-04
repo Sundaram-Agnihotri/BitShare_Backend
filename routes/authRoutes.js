@@ -35,7 +35,7 @@ async function mailer(recieveremail,code){
 
     })
 
-    console.log("Message sent: %s", info.messageId);
+    // console.log("Message sent: %s", info.messageId);
 
 }
 
@@ -69,7 +69,6 @@ const fileuploadFunction = (req,res,next) => {
 
 router.get('/test',(req,res)=>{
     res.send("Auth routes are working")
-    //  mailer("btech2021.sundaramagnihotri@mpgi.edu.in", 12345)
 })
 
 //send otp API

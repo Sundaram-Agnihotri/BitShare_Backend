@@ -9,7 +9,7 @@ const fileSchema = new mongoose.Schema({
     filename: {required:true , type:String},
     sharedAt: {required:true , type:Date},
     fileType : {type:String}
-},{timestamps: true})   //time is alsobe recorded at real time
+},{timestamps: true})
 
 const userSchema = new mongoose.Schema({
     name: {required:true , type:String},
